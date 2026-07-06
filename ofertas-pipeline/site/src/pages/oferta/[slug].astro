@@ -45,7 +45,11 @@ function formatarData(iso: string) {
     <article class="oferta" data-ts={oferta.data}>
       {oferta.imagem_url && (
         <div class="imagem">
-          <img src={oferta.imagem_url} alt={oferta.titulo} />
+          <img
+            src={oferta.imagem_url}
+            alt={oferta.titulo}
+            onerror="this.parentElement.innerHTML='📦';this.parentElement.classList.add('placeholder');"
+          />
         </div>
       )}
 
@@ -156,6 +160,12 @@ function formatarData(iso: string) {
     width: 100%;
     max-height: 380px;
     object-fit: contain;
+  }
+
+  .imagem.placeholder {
+    height: 200px;
+    font-size: 3.5rem;
+    color: #bbb;
   }
 
   .conteudo {

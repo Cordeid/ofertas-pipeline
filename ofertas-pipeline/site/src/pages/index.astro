@@ -24,7 +24,12 @@ function formatarData(iso: string) {
       >
         {oferta.imagem_url ? (
           <div class="card-img">
-            <img src={oferta.imagem_url} alt={oferta.titulo} loading="lazy" />
+            <img
+              src={oferta.imagem_url}
+              alt={oferta.titulo}
+              loading="lazy"
+              onerror="this.parentElement.innerHTML='📦';this.parentElement.classList.add('placeholder');"
+            />
           </div>
         ) : (
           <div class="card-img placeholder">📦</div>
