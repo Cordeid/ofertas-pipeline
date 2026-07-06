@@ -295,10 +295,26 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Pipeline de ofertas Amazon")
     parser.add_argument("--dry-run", action="store_true", help="Simula sem publicar nem escrever")
     parser.add_argument("--test", action="store_true", help="Usa linhas de exemplo sem precisar de credenciais")
+    parser.add_argument("--link", help="Processa um link avulso em dry-run (não precisa de credenciais)")
+    parser.add_argument("--preco", default="0,00", help="Preço para usar com --link (ex: 299,00)")
+    parser.add_argument("--obs", default="", help="Observação opcional para usar com --link")
+    parser.add_argument("--imagem", default="", help="URL de imagem opcional para usar com --link")
     args = parser.parse_args()
 
     if args.test:
         run_test(dry_run=True)
+        return
+
+    if args.link:
+        row = {
+            "link": args.link,
+            "preco": args.preco,
+            "imagem_url": args.imagem,
+            "obs": args.obs,
+            "status": "",
+        }
+        print("=== DRY-RUN com link avulso ===\n")
+        process_row(row, 2, sheet=None, dry_run=True)
         return
 
     sheet = get_sheet()
