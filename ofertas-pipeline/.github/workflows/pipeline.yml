@@ -1,0 +1,53 @@
+name: Pipeline de Ofertas
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: pipeline
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Configurar Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: automation/requirements.txt
+
+      - name: Instalar dependências
+        run: pip install -r automation/requirements.txt
+
+      - name: Executar pipeline
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          AFFILIATE_TAG: ${{ secrets.AFFILIATE_TAG }}
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: python automation/pipeline.py
+
+      - name: Commit e push do ofertas.json
+        run: |
+          git config user.name "ofertas-bot"
+          git config user.email "bot@ofertas-pipeline"
+          git add site/src/data/ofertas.json
+          # Só comita se houver mudança
+          git diff --cached --quiet || git commit -m "chore: atualiza ofertas.json [skip ci]"
+          git push

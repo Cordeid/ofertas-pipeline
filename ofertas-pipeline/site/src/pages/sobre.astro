@@ -1,0 +1,91 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="Sobre — Ofertas Verificadas"
+  description="Como funciona a curadoria de ofertas e nossa política de transparência com links de afiliado."
+>
+  <div class="container">
+    <h1>Sobre este site</h1>
+
+    <section>
+      <h2>Como funciona</h2>
+      <p>
+        Cada oferta publicada aqui passa por verificação humana de preço antes de chegar até você.
+        Só divulgamos descontos que consideramos reais — nada de "oferta" que não é oferta.
+      </p>
+      <p>
+        Quando encontramos uma boa oportunidade, preparamos uma página com informações verificadas
+        e compartilhamos o link no nosso grupo de WhatsApp. A página fica disponível mesmo depois
+        que o grupo recebe a mensagem.
+      </p>
+    </section>
+
+    <section>
+      <h2>Transparência total sobre afiliados</h2>
+      <div class="disclosure-box">
+        <p>
+          Este site participa do Programa de Associados da Amazon. Quando você compra por um dos
+          nossos links, recebemos uma pequena comissão — paga pela Amazon, sem custo extra nenhum
+          para você: o preço é exatamente o mesmo que você pagaria entrando direto no site.
+        </p>
+        <p>
+          É essa comissão que mantém a curadoria funcionando: cada oferta publicada aqui passa por
+          verificação humana de preço, e só divulgamos descontos que consideramos reais.
+        </p>
+        <p>
+          Os preços e condições exibidos foram verificados na data da publicação e podem mudar sem
+          aviso.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Contato</h2>
+      <p>
+        Dúvidas, sugestões ou encontrou alguma informação incorreta? Fique à vontade para entrar
+        em contato.
+      </p>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.7rem;
+    margin-bottom: 1.5rem;
+  }
+
+  section {
+    margin-bottom: 2rem;
+  }
+
+  h2 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    color: var(--cor-texto);
+  }
+
+  p {
+    color: var(--cor-texto-suave);
+    margin-bottom: 0.75rem;
+    line-height: 1.75;
+  }
+
+  .disclosure-box {
+    background: #fffbf0;
+    border: 1px solid #f0d080;
+    border-radius: var(--raio);
+    padding: 1.25rem 1.5rem;
+  }
+
+  .disclosure-box p {
+    color: #5a4a00;
+  }
+</style>

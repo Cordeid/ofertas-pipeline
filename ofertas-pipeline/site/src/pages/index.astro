@@ -1,0 +1,177 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ofertas from '../data/ofertas.json';
+
+function formatarData(iso: string) {
+  return new Date(iso).toLocaleDateString('pt-BR', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  });
+}
+---
+
+<Layout title="Ofertas Verificadas — Amazon Brasil">
+  <h1>Ofertas do dia</h1>
+  <p class="subtitulo">Curadoria humana de descontos reais. Cada oferta é verificada antes de ser publicada.</p>
+
+  <p id="msg-vazio" class="vazio" style="display:none">Nenhuma oferta ativa no momento. Volte em breve!</p>
+
+  <div class="grid" id="grid-ofertas">
+    {ofertas.map((oferta) => (
+      <a
+        href={`/oferta/${oferta.slug}`}
+        class="card"
+        data-ts={oferta.data}
+      >
+        {oferta.imagem_url ? (
+          <div class="card-img">
+            <img src={oferta.imagem_url} alt={oferta.titulo} loading="lazy" />
+          </div>
+        ) : (
+          <div class="card-img placeholder">📦</div>
+        )}
+        <div class="card-body">
+          <h2>{oferta.titulo}</h2>
+          <p class="preco">R$ {oferta.preco}</p>
+          {oferta.obs && <p class="obs">✅ {oferta.obs}</p>}
+          <p class="data-verificado">Preço verificado em {formatarData(oferta.data)}</p>
+          <span class="btn">Ver oferta →</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</Layout>
+
+<script>
+  const LIMITE_MS = 48 * 60 * 60 * 1000; // 48 horas
+  const agora = Date.now();
+  const cards = document.querySelectorAll<HTMLElement>('#grid-ofertas .card');
+  let ativas = 0;
+
+  cards.forEach((card) => {
+    const ts = card.dataset.ts;
+    if (!ts) return;
+    const idade = agora - new Date(ts).getTime();
+    if (idade >= LIMITE_MS) {
+      card.style.display = 'none';
+    } else {
+      ativas++;
+    }
+  });
+
+  if (ativas === 0) {
+    const msg = document.getElementById('msg-vazio');
+    if (msg) msg.style.display = 'block';
+  }
+</script>
+
+<style>
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .subtitulo {
+    color: var(--cor-texto-suave);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .vazio {
+    text-align: center;
+    color: var(--cor-texto-suave);
+    margin-top: 3rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .card {
+    background: var(--cor-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow 0.2s, transform 0.2s;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+    transform: translateY(-2px);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .card-img.placeholder {
+    font-size: 3.5rem;
+    color: #bbb;
+  }
+
+  .card-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    flex: 1;
+  }
+
+  .card-body h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .preco {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--cor-destaque);
+  }
+
+  .obs {
+    font-size: 0.8rem;
+    color: #2a7a2a;
+    font-weight: 500;
+  }
+
+  .data-verificado {
+    font-size: 0.75rem;
+    color: #aaa;
+    margin-top: auto;
+  }
+
+  .btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    background: var(--cor-destaque);
+    color: #fff;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  .card:hover .btn {
+    background: var(--cor-destaque-hover);
+  }
+</style>
