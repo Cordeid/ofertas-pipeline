@@ -56,6 +56,25 @@ def parse_amazon_link(url: str) -> tuple[str | None, str | None]:
     return asin, titulo
 
 
+def normalizar_preco(valor) -> str:
+    """Normalizes any price format to Brazilian display: 1.649,00"""
+    if isinstance(valor, (int, float)):
+        num = float(valor)
+    else:
+        s = str(valor).strip().replace(" ", "")
+        if not s:
+            return "0,00"
+        # BR format: dot = thousands sep, comma = decimal sep → convert to float
+        if "," in s:
+            s = s.replace(".", "").replace(",", ".")
+        try:
+            num = float(s)
+        except ValueError:
+            return str(valor).strip()
+    # f"{:,.2f}" → EN "1,649.00" → swap to BR "1.649,00"
+    return f"{num:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
 def make_slug(titulo: str, asin: str) -> str:
     base = re.sub(r"[^a-z0-9]+", "-", titulo.lower()).strip("-")
     return f"{base}-{asin[-4:].lower()}"
@@ -176,10 +195,10 @@ def send_telegram(post: str, imagem_url: str | None, dry_run: bool) -> None:
 # ── Row processor ─────────────────────────────────────────────────────────────
 
 def process_row(row: dict, row_index: int, sheet, dry_run: bool) -> None:
-    link = row.get("link", "").strip()
-    preco = row.get("preco", "").strip()
-    imagem_url = row.get("imagem_url", "").strip() or None
-    obs = row.get("obs", "").strip() or None
+    link = str(row.get("link", "")).strip()
+    preco = normalizar_preco(row.get("preco", ""))
+    imagem_url = str(row.get("imagem_url", "")).strip() or None
+    obs = str(row.get("obs", "")).strip() or None
 
     # 3a. Parse link
     asin, titulo = parse_amazon_link(link)
