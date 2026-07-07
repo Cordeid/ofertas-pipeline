@@ -337,7 +337,17 @@ def main() -> None:
         return
 
     sheet = get_sheet()
-    records = sheet.get_all_records()
+    # get_all_values() retorna strings (FORMATTED_VALUE) — evita que gspread
+    # converta "1.649,00" em float 1.649 antes de chegarmos ao normalizar_preco
+    all_values = sheet.get_all_values()
+    if len(all_values) < 2:
+        print("Nenhuma linha na planilha.")
+        return
+    headers = [h.strip() for h in all_values[0]]
+    records = [
+        dict(zip(headers, row + [""] * max(0, len(headers) - len(row))))
+        for row in all_values[1:]
+    ]
     pending = [
         (i + 2, row)
         for i, row in enumerate(records)
