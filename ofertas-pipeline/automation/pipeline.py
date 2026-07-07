@@ -230,8 +230,10 @@ def process_row(row: dict, row_index: int, sheet, dry_run: bool) -> None:
         post_whatsapp = fb["post_whatsapp"]
         descricao = fb["descricao_pagina"]
 
-    # Substitute placeholder that the prompt leaves for Python to fill
+    # Versão para a planilha (post_final): usa url_pagina — link do site
     post_whatsapp = post_whatsapp.replace("{url_pagina}", url_pagina)
+    # Versão para o Telegram: usa o link de afiliado diretamente
+    post_telegram = post_whatsapp.replace(url_pagina, link_afiliado)
 
     # 3d. Publish to site + commit
     oferta_entry = {
@@ -247,8 +249,8 @@ def process_row(row: dict, row_index: int, sheet, dry_run: bool) -> None:
     publish_to_site(oferta_entry, dry_run)
     git_commit_push(slug, dry_run)
 
-    # 3e. Telegram
-    send_telegram(post_whatsapp, imagem_url, dry_run)
+    # 3e. Telegram (link de afiliado direto)
+    send_telegram(post_telegram, imagem_url, dry_run)
 
     # 3f. Update sheet
     if not dry_run:
